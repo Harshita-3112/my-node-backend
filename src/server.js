@@ -61,6 +61,60 @@ app.get("/getAll/:tourid", async (req, res) => {
   }
 });
 
+app.put("/update/:updateid", async (req, res) => {
+  try {
+    const { updateid } = req.params;
+    console.log("update id here", updateid);
+
+    const { title, description, completed } = req.body;
+    console.log("id here", title, description, completed);
+
+    if (!title || !description || completed == undefined) {
+      return res.status(500).send({ message: "please enter all fields" });
+    }
+
+    const updatedTodo = await todoSchema.findOneAndUpdate(
+      { _id: updateid },
+      { title, description, completed },
+      { new: true, runValidators: true }
+    );
+    res.send(updatedTodo);
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+});
+
+app.put("/update/complete/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log("id here", id);
+
+    const { completed } = req.body;
+    const updatedTodo = await todoSchema.findByIdAndUpdate(
+      { _id: id },
+      { completed },
+      { new: true, runValidators: true }
+    );
+    res.send(updatedTodo);
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+});
+
+app.delete("/delete/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log("delete id here", id);
+
+    const deletedItem = await todoSchema.findByIdAndDelete(id);
+    if (!deletedItem)
+      return res.status(404).json({ message: "Item not found" });
+    res.send({ message: "Item deleted" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 app.listen(PORT, () =>
   console.log(`Server running on http://localhost:${PORT}`)
 );
