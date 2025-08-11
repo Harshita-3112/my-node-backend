@@ -61,6 +61,8 @@ app.get("/getAll/:tourid", async (req, res) => {
   }
 });
 
+// put
+
 app.put("/update/:updateid", async (req, res) => {
   try {
     const { updateid } = req.params;
